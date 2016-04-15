@@ -1,17 +1,15 @@
 PID      = /tmp/awesome-golang-project.pid
 GO_FILES = $(wildcard *.go)
-APP      = ./app
-serve: restart
-	@fswatch -o . | xargs -n1 -I{}  make restart || make kill
-
+serve:
+    @make restart
+    @fswatch -o . | xargs -n1 -I{}  make restart || make kill
 kill:
-	@kill `cat $(PID)` || true
+    @kill `cat $(PID)` || true
+stuff:
+    @echo "actually do nothing"
+restart:
+    @make kill
+    @make stuff
+    @go run $(GO_FILES) & echo $$! > $(PID)
 
-before:
-	@echo "actually do nothing"
-$(APP): $(GO_FILES)
-	@go build $? -o $@
-restart: kill before $(APP)
-		@app & echo $$! > $(PID)
-
-.PHONY: serve restart kill before # let's go to reserve rules names
+.PHONY: serve restart kill stuff # let's go t
